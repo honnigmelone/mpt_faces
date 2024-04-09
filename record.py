@@ -5,7 +5,7 @@ import gdown
 import uuid
 import csv
 from common import ROOT_FOLDER
-from cascade import create_cascade
+#from cascade import create_cascade
 
 # Quellen
 #  - How to open the webcam: https://docs.opencv.org/4.x/dd/d43/tutorial_py_video_display.html
@@ -19,7 +19,33 @@ from cascade import create_cascade
 def record(args):
     # TODO: Implement the recording stage of your pipeline
     #   Create missing folders before you store data in them (os.mkdir)
+    if not os.path.exists(ROOT_FOLDER + args):
+        os.mkdir(ROOT_FOLDER + args)
+        
     #   Open The OpenCV VideoCapture Device to retrieve live images from your webcam (cv.VideoCapture)
+    cap = cv.VideoCapture(0)
+    if not cap.isOpened():
+        print("Cannot open camera!")
+        exit()
+
+    while True:
+        #capture frame
+        ret, frame = cap.read()
+         # if frame is read correctly ret is True
+        if not ret:
+            print("Can't receive frame (stream end?). Exiting ...")
+            break
+        # Our operations on the frame come here
+        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        # Display the resulting frame
+        cv.imshow('frame', gray)
+        if cv.waitKey(1) == ord('q'):
+            break
+        
+        # When everything done, release the capture
+    cap.release()
+    cv.destroyAllWindows()
+
     #   Initialize the Haar feature cascade for face recognition from OpenCV (cv.CascadeClassifier)
     #   If the cascade file (haarcascade_frontalface_default.xml) is missing, download it from google drive
     #   Run the cascade on every image to detect possible faces (CascadeClassifier::detectMultiScale)
@@ -28,3 +54,5 @@ def record(args):
     if args.folder is None:
         print("Please specify folder for data to be recorded into")
         exit()
+
+record("kdksdfdgg")
