@@ -24,8 +24,8 @@ def record(args):
     target_folder = os.path.join(ROOT_FOLDER, args)
     os.makedirs(target_folder, exist_ok=True)
 
-    counter = 0
     face_match = False
+    HAAR_CASCADE = cv.data.haarcascades + "haarcascade_frontalface_default.xml"
         
     #   Open The OpenCV VideoCapture Device to retrieve live images from your webcam (cv.VideoCapture)
     cap = cv.VideoCapture(0)
@@ -44,10 +44,31 @@ def record(args):
         # Display the resulting frame
         cv.imshow('frame', frame)
 
-        #detect and save face
-        if counter == 30:
+        
 
-            pass
+        #create cascade
+        face_cascade = cv.CascadeClassifier(HAAR_CASCADE)
+
+        #change to grayscale
+        gray_frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+
+        # start cascade
+        faces = face_cascade.detectMultiScale(gray_frame, 1.3, 5)
+
+        #if detected face
+        for (x,y,w,h) in faces:
+
+            #save frame with unique filename
+            filename = f"face_{args}_{uuid.uuid4()}.jpg"
+            
+            cv.imwrite(os.path.join(target_folder, filename), frame)
+
+            
+
+        #bild aufnehmen mit bestimmten ordnernamen und koordinaten als csv
+            #für 30 frames kein bild aufnehmen
+
+            
         if cv.waitKey(1) == ord('q'):
             break
         
@@ -59,7 +80,6 @@ def record(args):
 
 
     #   Initialize the Haar feature cascade for face recognition from OpenCV (cv.CascadeClassifier)
-    face_cascade = cv.CascadeClassifier(HAAR_CASCADE)
     #   If the cascade file (haarcascade_frontalface_default.xml) is missing, download it from google drive
     #   Run the cascade on every image to detect possible faces (CascadeClassifier::detectMultiScale)
     #   If there is exactly one face, write the image and the face position to disk in two seperate files (cv.imwrite, csv.writer)
