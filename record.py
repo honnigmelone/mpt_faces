@@ -19,8 +19,11 @@ from common import ROOT_FOLDER
 def record(args):
     # TODO: Implement the recording stage of your pipeline
     #   Create missing folders before you store data in them (os.mkdir)
-    if not os.path.exists(ROOT_FOLDER + args):
-        os.mkdir(ROOT_FOLDER + args)
+    
+    # Create missing folders before you store data in them
+    target_folder = os.path.join(ROOT_FOLDER, args)
+    os.makedirs(target_folder, exist_ok=True)
+
         
     #   Open The OpenCV VideoCapture Device to retrieve live images from your webcam (cv.VideoCapture)
     cap = cv.VideoCapture(0)
@@ -35,14 +38,13 @@ def record(args):
         if not ret:
             print("Can't receive frame (stream end?). Exiting ...")
             break
-        # Our operations on the frame come here
-        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        
         # Display the resulting frame
-        cv.imshow('frame', gray)
+        cv.imshow('frame', frame)
         if cv.waitKey(1) == ord('q'):
             break
         
-        # When everything done, release the capture
+    # When everything done, release the capture
     cap.release()
     cv.destroyAllWindows()
 
@@ -55,4 +57,4 @@ def record(args):
         print("Please specify folder for data to be recorded into")
         exit()
 
-record("kdksdfdgg")
+record("kdkg")
