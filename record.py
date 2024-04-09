@@ -24,7 +24,6 @@ def record(args):
     target_folder = os.path.join(ROOT_FOLDER, args)
     os.makedirs(target_folder, exist_ok=True)
 
-    face_match = False
     HAAR_CASCADE = cv.data.haarcascades + "haarcascade_frontalface_default.xml"
         
     #   Open The OpenCV VideoCapture Device to retrieve live images from your webcam (cv.VideoCapture)
@@ -59,15 +58,20 @@ def record(args):
         for (x,y,w,h) in faces:
 
             #save frame with unique filename
-            filename = f"face_{args}_{uuid.uuid4()}.jpg"
+            filename = f"face_{args}_{uuid.uuid4()}"
             
-            cv.imwrite(os.path.join(target_folder, filename), frame)
+            # Save frame with the same filename but with .jpg extension
+            cv.imwrite(os.path.join(target_folder, f"{filename}.jpg"), frame)
 
-            
+            # Write face position to a CSV file with the same filename but with .csv extension
+            with open(os.path.join(target_folder, f"{filename}.csv"), mode='w') as csv_file:
+                csv_writer = csv.writer(csv_file)
 
-        #bild aufnehmen mit bestimmten ordnernamen und koordinaten als csv
+                csv_writer.writerow([[x,y,w,h]])
+
+
             #für 30 frames kein bild aufnehmen
-
+            #Rechteckums Gesicht malen
             
         if cv.waitKey(1) == ord('q'):
             break
