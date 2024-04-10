@@ -62,6 +62,10 @@ def record(args):
             
             for (x,y,w,h) in faces:
 
+                #show rectangle of face
+                cv.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2)
+
+
                 #save frame with unique filename
                 filename = f"face_{args}_{uuid.uuid4()}"
                 
