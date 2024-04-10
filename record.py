@@ -43,11 +43,7 @@ def record(args):
             print("Can't receive frame (stream end?). Exiting ...")
             break
         
-        # Display the resulting frame
-        cv.imshow('frame', frame)
-
-        
-
+        frame_with_rectangle = frame.copy()
         #create cascade
         face_cascade = cv.CascadeClassifier(HAAR_CASCADE)
 
@@ -58,39 +54,41 @@ def record(args):
         faces = face_cascade.detectMultiScale(gray_frame, 1.3, 5)
 
         #if detected face
-        if len(faces) > 0 and save_frames:
+        if len(faces) > 0:
             
             for (x,y,w,h) in faces:
 
                 #show rectangle of face
-                cv.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2)
+                cv.rectangle(frame_with_rectangle, (x,y), (x+w,y+h), (0,255,0), 2)
 
+                if save_frames:
 
-                #save frame with unique filename
-                filename = f"face_{args}_{uuid.uuid4()}"
-                
-                # save frame with the same filename but with .jpg extension
-                cv.imwrite(os.path.join(target_folder, f"{filename}.jpg"), frame)
+                    #save frame with unique filename
+                    filename = f"face_{args}_{uuid.uuid4()}"
+                    
+                    # save frame with the same filename but with .jpg extension
+                    cv.imwrite(os.path.join(target_folder, f"{filename}.jpg"), frame)
 
-                # write face position to a CSV file with the same filename but with .csv extension
-                with open(os.path.join(target_folder, f"{filename}.csv"), "w", newline="") as csv_file:
-                    csv_writer = csv.writer(csv_file, delimiter=",")
-                    for x,y,w,h in faces:
-                        csv_writer.writerow([x,y,w,h])
+                    # write face position to a CSV file with the same filename but with .csv extension
+                    with open(os.path.join(target_folder, f"{filename}.csv"), "w", newline="") as csv_file:
+                        csv_writer = csv.writer(csv_file, delimiter=",")
+                        for x,y,w,h in faces:
+                            csv_writer.writerow([x,y,w,h])
 
-                #change save_frames status
-                save_frames = False
+                    #change save_frames status
+                    save_frames = False
 
-                frames_since_detection = 0
-        #dont save face for 30 frames after face was saved
-        else:
-            frames_since_detection += 1
+                    frames_since_detection = 0
+            #dont save face for 30 frames after face was saved
+            else:
+                frames_since_detection += 1
 
-            if frames_since_detection >= 30:
-                save_frames = True
-
+                if frames_since_detection >= 30:
+                    save_frames = True
         
-
+        #display frame
+        cv.imshow('frame', frame_with_rectangle)
+    
             
             #Rechteckums Gesicht malen
             #dieses google drive ding
