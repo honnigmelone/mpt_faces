@@ -31,6 +31,9 @@ def record(args):
     if not cap.isOpened():
         print("Cannot open camera!")
         exit()
+    #variable to detect when to cpature frame 
+    frames_since_detection = 0 
+    save_frames = True
 
     while True:
         #capture frame
@@ -55,23 +58,39 @@ def record(args):
         faces = face_cascade.detectMultiScale(gray_frame, 1.3, 5)
 
         #if detected face
-        for (x,y,w,h) in faces:
-
-            #save frame with unique filename
-            filename = f"face_{args}_{uuid.uuid4()}"
+        if len(faces) > 0 and save_frames:
             
-            # Save frame with the same filename but with .jpg extension
-            cv.imwrite(os.path.join(target_folder, f"{filename}.jpg"), frame)
+            for (x,y,w,h) in faces:
 
-            # Write face position to a CSV file with the same filename but with .csv extension
-            with open(os.path.join(target_folder, f"{filename}.csv"), mode='w') as csv_file:
-                csv_writer = csv.writer(csv_file)
+                #save frame with unique filename
+                filename = f"face_{args}_{uuid.uuid4()}"
+                
+                # save frame with the same filename but with .jpg extension
+                cv.imwrite(os.path.join(target_folder, f"{filename}.jpg"), frame)
 
-                csv_writer.writerow([[x,y,w,h]])
+                # write face position to a CSV file with the same filename but with .csv extension
+                with open(os.path.join(target_folder, f"{filename}.csv"), "w", newline="") as csv_file:
+                    csv_writer = csv.writer(csv_file, delimiter=",")
+                    for x,y,w,h in faces:
+                        csv_writer.writerow([x,y,w,h])
 
+                #change save_frames status
+                save_frames = False
 
-            #für 30 frames kein bild aufnehmen
+                frames_since_detection = 0
+        #dont save face for 30 frames after face was saved
+        else:
+            frames_since_detection += 1
+
+            if frames_since_detection >= 30:
+                save_frames = True
+
+        
+
+            
             #Rechteckums Gesicht malen
+            #dieses google drive ding
+
             
         if cv.waitKey(1) == ord('q'):
             break
