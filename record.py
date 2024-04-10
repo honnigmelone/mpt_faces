@@ -60,6 +60,7 @@ def record(args):
 
                 #show rectangle of face
                 cv.rectangle(frame_with_rectangle, (x,y), (x+w,y+h), (0,255,0), 2)
+                cv.putText(frame_with_rectangle,args,(x,y-10), cv.FONT_HERSHEY_COMPLEX, 0.9 ,(0,255,0), 2)
 
                 if save_frames:
 
