@@ -90,8 +90,6 @@ def record(args):
         #display frame
         cv.imshow('frame', frame_with_rectangle)
     
-            
-            #Rechteckums Gesicht malen
             #dieses google drive ding
 
             
