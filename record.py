@@ -24,8 +24,14 @@ def record(args):
     target_folder = os.path.join(ROOT_FOLDER, args)
     os.makedirs(target_folder, exist_ok=True)
 
-    HAAR_CASCADE = cv.data.haarcascades + "haarcascade_frontalface_default.xml"
-        
+    HAAR_CASCADE = cv.data.haarcascades + "haarcascade_frontalface_default.xmlx"
+
+    #google drive download
+    if not os.path.isfile(HAAR_CASCADE):
+        print("File not found. Downloading from google drive...")
+        url = "https://drive.google.com/file/d/1ewEfKeYhdmrBMXPItGBJ4e6h5sjkP_HR/view?usp=drive_link"
+        gdown.download(url, HAAR_CASCADE
+                       )        
     #   Open The OpenCV VideoCapture Device to retrieve live images from your webcam (cv.VideoCapture)
     cap = cv.VideoCapture(0)
     if not cap.isOpened():
