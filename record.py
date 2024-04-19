@@ -116,3 +116,5 @@ def record(args):
     if args.folder is None:
         print("Please specify folder for data to be recorded into")
         exit()
+
+record("Fliegenfisch")
