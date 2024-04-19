@@ -50,7 +50,7 @@ def record(args):
         if not ret:
             print("Can't receive frame (stream end?). Exiting ...")
             break
-        
+
         frame_with_rectangle = frame.copy()
         #create cascade
         face_cascade = cv.CascadeClassifier(HAAR_CASCADE)
