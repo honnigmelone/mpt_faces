@@ -19,7 +19,7 @@ from common import ROOT_FOLDER
 def record(args):
     # TODO: Implement the recording stage of your pipeline  
     # Create missing folders before you store data in them
-    target_folder = os.path.join(ROOT_FOLDER, args)
+    target_folder = os.path.join(ROOT_FOLDER, args.folder)
     os.makedirs(target_folder, exist_ok=True)
 
     HAAR_CASCADE = cv.data.haarcascades + "haarcascade_frontalface_default.xml"
@@ -67,12 +67,12 @@ def record(args):
 
                 #show rectangle of face
                 cv.rectangle(frame_with_rectangle, (x,y), (x+w,y+h), (0,255,0), 2)
-                cv.putText(frame_with_rectangle,args,(x,y-10), cv.FONT_HERSHEY_COMPLEX, 0.9 ,(0,255,0), 2)
+                cv.putText(frame_with_rectangle,args.folder,(x,y-10), cv.FONT_HERSHEY_COMPLEX, 0.9 ,(0,255,0), 2)
 
         if len(faces) and save_frames:
 
             #save frame with unique filename
-            filename = f"face_{args}_{uuid.uuid4()}"
+            filename = f"face_{args.folder}_{uuid.uuid4()}"
             
             # save frame with the same filename but with .jpg extension
             cv.imwrite(os.path.join(target_folder, f"{filename}.jpg"), frame)
