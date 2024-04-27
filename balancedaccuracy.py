@@ -17,10 +17,12 @@ class BalancedAccuracy:
     def __init__(self, nClasses):
         # TODO: Setup internal variables
         # NOTE: It is good practive to all reset() from here to make sure everything is properly initialized
+        pass
 
     def reset(self):
         # TODO: Reset internal states.
         # Called at the beginning of each epoch
+        pass
 
     def update(self, predictions, groundtruth):
         # TODO: Implement the update of internal states
@@ -32,8 +34,10 @@ class BalancedAccuracy:
         #
         # Groundtruth is a BATCH_SIZE x 1 long Tensor. It contains the index of the
         # ground truth class.
+        pass
 
     def getBACC(self):
         #sklearn.metrics.balanced_accuracy_score(y_true, y_pred, *, sample_weight=None, adjusted=False)[source]¶ 
         # TODO: Calculcate and return balanced accuracy 
         # based on current internal state
+        pass

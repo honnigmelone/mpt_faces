@@ -5,7 +5,7 @@ import gdown
 import uuid
 import csv
 from common import ROOT_FOLDER
-#from cascade import create_cascade
+
 
 # Quellen
 #  - How to open the webcam: https://docs.opencv.org/4.x/dd/d43/tutorial_py_video_display.html
@@ -18,8 +18,14 @@ from common import ROOT_FOLDER
 # This is the data recording pipeline
 def record(args):
     # TODO: Implement the recording stage of your pipeline  
-    # Create missing folders before you store data in them
-    target_folder = os.path.join(ROOT_FOLDER, args)
+
+    #exit if folder is None
+    if args.folder is None:
+        print("Please specify folder for data to be recorded into")
+        exit()
+
+    # Create missing folder
+    target_folder = os.path.join(ROOT_FOLDER, args.folder)
     os.makedirs(target_folder, exist_ok=True)
 
     HAAR_CASCADE = cv.data.haarcascades + "haarcascade_frontalface_default.xml"
@@ -67,12 +73,12 @@ def record(args):
 
                 #show rectangle of face
                 cv.rectangle(frame_with_rectangle, (x,y), (x+w,y+h), (0,255,0), 2)
-                cv.putText(frame_with_rectangle,args,(x,y-10), cv.FONT_HERSHEY_COMPLEX, 0.9 ,(0,255,0), 2)
+                cv.putText(frame_with_rectangle,args.folder,(x,y-10), cv.FONT_HERSHEY_COMPLEX, 0.9 ,(0,255,0), 2)
 
         if len(faces) and save_frames:
 
             #save frame with unique filename
-            filename = f"face_{args}_{uuid.uuid4()}"
+            filename = f"face_{args.folder}_{uuid.uuid4()}"
             
             # save frame with the same filename but with .jpg extension
             cv.imwrite(os.path.join(target_folder, f"{filename}.jpg"), frame)
@@ -113,6 +119,3 @@ def record(args):
     #   Run the cascade on every image to detect possible faces (CascadeClassifier::detectMultiScale)
     #   If there is exactly one face, write the image and the face position to disk in two seperate files (cv.imwrite, csv.writer)
     #   If you have just saved, block saving for 30 consecutive frames to make sure you get good variance of images.
-    if args.folder is None:
-        print("Please specify folder for data to be recorded into")
-        exit()
