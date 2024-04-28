@@ -22,8 +22,8 @@ class Net(nn.Module):
         self.Conv5 = nn.Conv2d(32,16,(3,3))
 
         # Input is calculated with size*size*output of last layer. Size here depends on all the strides of maxPool layers before
-        # Here I'm planning only one with stride 2 --> 256/2 = 128
-        self.fc1 = nn.Linear((128*128*16), 512) 
+        # Here 3 with stride 2 --> (256/8) = 32 --> /8 because of 2^3
+        self.fc1 = nn.Linear((32*32*16), 512) 
         self.fc2 = nn.Linear(512, nClasses)
 
         # Other Layers:
@@ -41,4 +41,34 @@ class Net(nn.Module):
         # Implement forward pass
         #  x is a BATCH_SIZEx3x256x256 Tensor
         #  return value must be a BATCH_SIZExN_CLASSES Tensor
-        pass
+
+        # Block 1
+        x = self.Conv1(x)
+        x = self.Conv2(x)
+        x = self.Relu(x)
+        x = self.Pool(x)
+
+        # Block 2
+        x = self.Conv3(x)
+        x = self.Conv4(x)
+        x = self.Relu(x)
+        x = self.Pool(x)
+
+        # Block 3
+        x = self.Conv5(x)
+        x = self.Relu(x)
+        x = self.Pool(x)
+        
+        # Block fully connected layer
+        x = self.Flat(x)
+        x = self.Relu(x)
+        x = self.fc1(x)
+        
+        # Block output layer
+        x = self.Relu(x)
+        x = self.fc2(x)
+        x = self.Soft(x)
+        
+
+
+        
