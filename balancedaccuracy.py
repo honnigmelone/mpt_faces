@@ -37,6 +37,7 @@ class BalancedAccuracy:
         pass
 
     def getBACC(self):
+        #sklearn.metrics.balanced_accuracy_score(y_true, y_pred, *, sample_weight=None, adjusted=False)[source]¶ 
         # TODO: Calculcate and return balanced accuracy 
         # based on current internal state
         pass
