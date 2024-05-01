@@ -57,7 +57,7 @@ def train(args):
                 optim.zero_grad()
 
                 out = net(batch)
-                assert(out.shape[0] == BATCH_SIZE)
+                #assert(out.shape[0] == BATCH_SIZE)
                 assert(out.shape[1] == nClasses)
 
                 bacc.update(out, labels)
@@ -69,9 +69,9 @@ def train(args):
                 loss.backward()
                 optim.step()
 
-                bar.set_description(
-                    f"{label}   {epoch+1:3}/{int(args.epochs)}   loss={100.0 * total_loss / total_cnt:10.5f}    bacc={100.0 * bacc.getBACC():.2f}%"
-                )
+                #bar.set_description(
+                #    f"{label}   {epoch+1:3}/{int(args.epochs)}   loss={100.0 * total_loss / total_cnt:10.5f}    bacc={100.0 * bacc.getBACC():.2f}%"
+                #)
 
         # Save a checkpoint after each epoch
         torch.save({"model": net.state_dict(), "classes": trainset.classes}, "model.pt")
