@@ -2,9 +2,10 @@ import cv2 as cv
 import torch
 import os
 from network import Net
-from cascade import create_cascade
+#from cascade import create_cascade
 from transforms import ValidationTransform
 from PIL import Image
+import crop
 
 # NOTE: This will be the live execution of your pipeline
 
@@ -48,6 +49,7 @@ def live(args):
     faces = face_cascade.detectMultiScale(gray_frame, 1.3, 5)
 
     frame_with_rectangle = frame_with_border.copy()
+
     if len(faces) > 0:    
             for (x,y,w,h) in faces:
                 #show rectangle of face
@@ -55,6 +57,12 @@ def live(args):
                 cv.putText(frame_with_rectangle,args,(x,y-10), cv.FONT_HERSHEY_COMPLEX, 0.9 ,(0,255,0), 2)
 
                 # retrieve picture + crop
+                # frame_with_border == Bild vom Gesicht
+                # x,y,w,h == Koordinaten vom Gesicht
+                
+                     
+
+
 
 
 
