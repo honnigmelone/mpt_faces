@@ -10,10 +10,12 @@ import random
 # NOTE: This will be the live execution of your pipeline
 
 
+
 '''
 -> Cropping might need an update
 -> Amount of processed frames might need to be reduced (e.g. by using save_frames like in record.py)
 '''
+
 def live(args):
     # TODO: 
     #   Load the model checkpoint from a previous training session (check code in train.py)
@@ -25,7 +27,9 @@ def live(args):
 
     model.eval()
 
+
 #   Also, create a video capture device to retrieve live footage from the webcam.
+
     cap = cv.VideoCapture(0)
     if not cap.isOpened():
         print("Cannot open camera!")

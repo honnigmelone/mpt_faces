@@ -56,7 +56,7 @@ def record(args):
         if not ret:
             print("Can't receive frame (stream end?). Exiting ...")
             break
-        
+
         frame_with_rectangle = frame.copy()
         #create cascade
         face_cascade = cv.CascadeClassifier(HAAR_CASCADE)
@@ -118,4 +118,8 @@ def record(args):
     #   If the cascade file (haarcascade_frontalface_default.xml) is missing, download it from google drive
     #   Run the cascade on every image to detect possible faces (CascadeClassifier::detectMultiScale)
     #   If there is exactly one face, write the image and the face position to disk in two seperate files (cv.imwrite, csv.writer)
+
     #   If you have just saved, block saving for 30 consecutive frames to make sure you get good variance of images.
+    if args.folder is None:
+        print("Please specify folder for data to be recorded into")
+        exit()
