@@ -12,17 +12,18 @@ class Net(nn.Module):
         # Input images will be 3 channels 256x256 pixels.   --> Input-Channel = 3
         # Output must be a nClasses Tensor.                 --> last linear layer has to have nClasses output
 
-
         # Convolutional and Maxpooling layers:
-        self.Conv1 = nn.Conv2d(3,16,(3,3), padding="same") # default padding=same
+        self.Conv1 = nn.Conv2d(3,16,(3,3), padding="same") 
         self.Conv2 = nn.Conv2d(16,32,(3,3), padding="same")
         self.Conv3 = nn.Conv2d(32,64,(3,3), padding="same")
 
         self.Conv4 = nn.Conv2d(64,32,(3,3), padding="same")
         self.Conv5 = nn.Conv2d(32,16,(3,3), padding="same")
 
-        # Input is calculated with size*size*output of last layer. Size here depends on all the strides of maxPool layers before
-        # Here 3 with stride 2 --> (256/8) = 32 --> /8 because of 2^3
+        # Input is calculated with size*size*output of last layer. 
+        # Size here depends on all the strides of maxPool layers before
+        # Here 3*maxpool with stride 2 --> (256/8) = 32 --> /8 because of 2^3
+        # 32x32x16 = 16384
         self.fc1 = nn.Linear(16384,8) 
         self.fc2 = nn.Linear(8, nClasses)
 
@@ -32,9 +33,6 @@ class Net(nn.Module):
         self.Flat = nn.Flatten()
         self.Soft = nn.Softmax(dim=1) # adjust dim maybe? #crossentropyloss
         
-
-
-
 
     def forward(self, x):
         # TODO: 
@@ -48,7 +46,6 @@ class Net(nn.Module):
         x = self.Conv2(x)   # 256x256x32
         x = self.Pool(x)    # 128x128x32
  
-
         # Block 2
         x = self.Conv3(x)   # 128x128x64
         x = self.Relu(x)    # 128x128x64
@@ -70,6 +67,3 @@ class Net(nn.Module):
         x = self.fc2(x)
         x = self.Soft(x)
         return x
-
-
-        
