@@ -68,7 +68,7 @@ def record(args):
         faces = face_cascade.detectMultiScale(gray_frame, 1.3, 5)
 
         #if detected face
-        if len(faces) > 0:    
+        if len(faces) > 0:
             for (x,y,w,h) in faces:
 
                 #show rectangle of face

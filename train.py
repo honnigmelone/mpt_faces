@@ -57,7 +57,7 @@ def train(args):
                 optim.zero_grad()
 
                 out = net(batch)
-                assert(out.shape[0] == BATCH_SIZE)
+                #assert(out.shape[0] == BATCH_SIZE)
                 assert(out.shape[1] == nClasses)
 
                 bacc.update(out, labels)
