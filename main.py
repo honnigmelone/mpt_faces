@@ -26,8 +26,8 @@ args = parser.parse_args()
 if args.mode == "record":
     record(args)
 
-# if args.mode == "crop":
-#     crop(args)
+if args.mode == "crop":
+    crop(args)
 
 # if args.mode == "train":
 #     train(args)

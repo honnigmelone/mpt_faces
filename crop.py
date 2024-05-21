@@ -3,10 +3,10 @@ from common import ROOT_FOLDER, TRAIN_FOLDER, VAL_FOLDER
 import os
 import csv
 import random
+import numpy as np
+from PIL import Image
 
-# Quellen
-#  - How to iterate over all files/folders in one directory: https://www.tutorialspoint.com/python/os_walk.htm
-#  - How to add border to an image: https://www.geeksforgeeks.org/python-opencv-cv2-copymakeborder-method/
+root_directory = os.getcwd() #this is the root folder of the program
 
 # This is the cropping of images
 def crop(args):
@@ -33,15 +33,17 @@ def crop(args):
         exit()
 
     # clean folders from all files if there are any
-    for root, dirs, files in os.walk(ROOT_FOLDER):
-        for name in files:
-            os.remove(os.path.join(root, name))
+    # for root, dirs, files in os.walk(ROOT_FOLDER):
+    #     for name in files:
+    #         os.remove(os.path.join(root, name))
 
-    #create folders if they don't exist yet
+    #create object folder
     if not os.path.exists(ROOT_FOLDER):
         os.mkdir(ROOT_FOLDER)
-    train_folder_path = os.path.join(ROOT_FOLDER, TRAIN_FOLDER)
-    val_folder_path = os.path.join(ROOT_FOLDER, VAL_FOLDER)
+
+    #create the train, val and "person-name"-folders
+    train_folder_path = os.path.join(root_directory, TRAIN_FOLDER)
+    val_folder_path = os.path.join(root_directory, VAL_FOLDER)
     for folder in [train_folder_path, val_folder_path]:
         if not os.path.exists(folder):
             os.mkdir(folder)
@@ -49,65 +51,88 @@ def crop(args):
     # iterate over all object folders
     for root, dirs, files in os.walk(ROOT_FOLDER):
         for dir_name in dirs:
-            object_folder = os.path.join(root, dir_name) #here smth is not quite well solved, need to work on this..
-
+            object_folder = os.path.join(root, dir_name) #take the current folder as the "object_folder" for this iteration
+            print(object_folder)
             # iterate over the full images
-            for root, dirs, files in os.walk(object_folder):
-                for file in files:
-                    print(f"I'm in file {file} now")
-                    #calculate borders if it's a csv-file
-                    if file.endswith(".csv"):
-                        crop_width, crop_height = border_calculation(os.path.join(object_folder, file), args.border)
+            for file in os.listdir(object_folder):
+                file = os.path.join(object_folder, file)
+                print(f"I'm in file {file} now")
+
+                #calculate borders if it's a csv-file
+                if file.endswith(".csv"):
+                    crop_width, crop_height, x1, y1, x2, y2 = border_calculation(file, args.border)
                     
-                    #crop the actual image with given border-size
-                    elif file.endswith(('.jpg', '.jpeg', '.png')):
-                        frame = cv.imread(os.path.join(object_folder, file))
+                #crop the actual image with given border-size if it's an image-file
+                elif file.endswith(('.jpg', '.jpeg', '.png')):
+                    frame = cv.imread(file)
 
-                        # border
-                        frame = cv.copyMakeBorder(frame, crop_width, crop_width, crop_height, crop_height, cv.BORDER_REFLECT)
+                    # apply the given border with BORDER_REFLECT
+                    frame_with_border = cv.copyMakeBorder(frame, crop_height, crop_height, crop_width, crop_width, cv.BORDER_REFLECT)
+                    
+                    #create a folder of the person in the train/val folders and set output directory to train or val
+                    output_folder = train_folder_path if random.uniform(0.0, 1.0) < float(args.split) else val_folder_path
+                    person_folder = os.path.join(output_folder, dir_name)
+                    if not os.path.exists(person_folder):
+                        os.mkdir(person_folder)
 
-                        # set the output directory for the new cropped image-file
-                        output_folder = train_folder_path if random.uniform(0.0, 1.0) < float(args.split) else val_folder_path
+                    # cache-save frame_with_border to train/val
+                    cv.imwrite(os.path.join(person_folder, file), frame_with_border)
 
-                        # save cropped image to the output directory
-                        cv.imwrite(os.path.join(output_folder, file), frame)
+                    print(x1, y1, x2, y2)
+                    image_array = np.array(frame_with_border)
+                    # Crop the image by slicing the array
+                    cropped_image_array = image_array[y1:y2, x1:x2]
+                    # Convert the cropped array back to an image
+                    frame_cropped = Image.fromarray(cropped_image_array)
+                    frame_cropped_array = np.array(frame_cropped)
 
-                        print(f"cropping of {file} completed.")
+                    #open, crop and save image
+                    #frame_to_crop = Image.open(frame_with_border) 
+                    #frame_cropped = frame_to_crop.crop((x1, y1, x2, y2))
+                    #frame_cropped.save(person_folder)
+                    #cv.imwrite(person_folder, frame_cropped)
 
-                        #delete uncropped image from objects-folder
-                        os.remove(os.path.join(object_folder, file))
-                        print(f"removed {file} from object folder.")
+                    #cropped_image = frame_with_border[y1:y2, x1:x2] 
+                    print(f"cropping of {file} completed.")
 
-def border_calculation(image_path, border=0.2):
+                    # show the cropped image
+                    cv.imshow('Cropped Image', frame_cropped_array)
+                    cv.waitKey(0)
+                    cv.destroyAllWindows()
+
+                    #THIS IS COMMENTED SO I CAN TEST THE CODE BETTER:
+                    #delete uncropped image from objects-folder
+                    #os.remove(file)
+                    #print(f"removed {file} from object folder.")
+
+
+# This is the calculation of the border by the given input
+def border_calculation(csv_path, border):
     #open csv and save the coordinates to variable "coords"
-    with open(image_path, "r", encoding="utf-8-sig") as file:
+    with open(csv_path, "r", encoding="utf-8-sig") as file:
         csv_reader = csv.reader(file, delimiter=",")
-        coords = list(csv_reader)
+        coords = next(csv_reader)
     
-    # get coordinates from csv
-    # only works with csv looking like this:
-    # top_left_x,top_left_y; top_right_x,top_right_y; bottom_right_x,bottom_right_y; bottom_left_x,bottom_left_y
-    top_left_x, top_left_y = map(int, coords[0])
-    bottom_right_x, bottom_right_y = map(int, coords[2])
-    
-    # calculate width and height of the image
-    original_width = bottom_right_x - top_left_x
-    original_height = bottom_right_y - top_left_y
-    
+    x = float(coords[0])
+    y = float(coords[1])
+    w = float(coords[2])
+    h = float(coords[3])
+    border = float(border)
+
+    print(f"OLD COORDS/width ARE: {x, y, w, h}")
+
     # calculate borders based on the set border-%
-    crop_width = int(original_width * border)
-    crop_height = int(original_height * border)
+    new_crop_width = int(w * border)
+    new_crop_height = int(h * border)
 
-    print(crop_width)
-    print(crop_height)
-    
-    return crop_width, crop_height
+    print(f"NEW CROP WIDTH/HEIGHT IS: {new_crop_width, new_crop_height}")
 
+    # get coords for the actual cropping
+    x1 = int(x + new_crop_width)
+    y1 = int(y + new_crop_height)
+    x2 = int(x + w + new_crop_width)
+    y2 = int(y + h + new_crop_height)
 
-#parser for test
-#parser = argparse.ArgumentParser(description='Crop images')
-#parser.add_argument('--border', type=float, default=0.2, help='Border value for cropping')
-#parser.add_argument('--split', type=float, help='Split value for deciding whether to save in train or val folder')
-#args = parser.parse_args()
-#border_calculation("/Users/mjy/croptest/objects/marie/marieistdas.jpeg")
-#python crop.py --border 0.2 --split 0.8
+    print(f"NEW COORDS ARE: {x1, y1, x2, y2}")
+
+    return new_crop_width, new_crop_height, x1, y1, x2, y2
