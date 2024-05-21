@@ -78,6 +78,7 @@ def crop(args):
                         os.remove(os.path.join(object_folder, file))
                         print(f"removed {file} from object folder.")
 
+
 def border_calculation(image_path, border=0.2):
     #open csv and save the coordinates to variable "coords"
     with open(image_path, "r", encoding="utf-8-sig") as file:
@@ -109,5 +110,9 @@ def border_calculation(image_path, border=0.2):
 #parser.add_argument('--border', type=float, default=0.2, help='Border value for cropping')
 #parser.add_argument('--split', type=float, help='Split value for deciding whether to save in train or val folder')
 #args = parser.parse_args()
+
+
+#crop(args)
 #border_calculation("/Users/mjy/croptest/objects/marie/marieistdas.jpeg")
-#python crop.py --border 0.2 --split 0.8
+#python your_script.py --border 0.2 --split 0.8
+

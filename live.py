@@ -2,12 +2,18 @@ import cv2 as cv
 import torch
 import os
 from network import Net
-from cascade import create_cascade
+#from cascade import create_cascade
 from transforms import ValidationTransform
 from PIL import Image
+import random
 
 # NOTE: This will be the live execution of your pipeline
 
+
+'''
+-> Cropping might need an update
+-> Amount of processed frames might need to be reduced (e.g. by using save_frames like in record.py)
+'''
 def live(args):
     # TODO: 
     #   Load the model checkpoint from a previous training session (check code in train.py)
@@ -19,55 +25,81 @@ def live(args):
 
     model.eval()
 
-    #   Also, create a video capture device to retrieve live footage from the webcam.
+#   Also, create a video capture device to retrieve live footage from the webcam.
     cap = cv.VideoCapture(0)
     if not cap.isOpened():
         print("Cannot open camera!")
         exit()
     
     while True:
-            #capture frame
-            ret, frame = cap.read()
-            # if frame is read correctly ret is True
-            if not ret:
-                print("Can't receive frame (stream end?). Exiting ...")
-                break
+        #capture frame
+        ret, frame = cap.read()
+        # if frame is read correctly ret is True
+        if not ret:
+            print("Can't receive frame (stream end?). Exiting ...")
+            break
 
     #   Attach border to the whole video frame for later cropping.
-    border_size = int(min(frame.shape[:2]) * float(args.border))
-    frame_with_border = cv.copyMakeBorder(frame, border_size, border_size, border_size, border_size, cv.BORDER_REFLECT, value=[0, 0, 0])
+        border_size = int(min(frame.shape[:2]) * float(args.border))
+        frame_with_border = cv.copyMakeBorder(frame, border_size, border_size, border_size, border_size, cv.BORDER_REFLECT, value=[0, 0, 0])
 
 
     #   Initialize the face recognition cascade again (reuse code if possible)
-    HAAR_CASCADE = cv.data.haarcascades + "haarcascade_frontalface_default.xml"
+        HAAR_CASCADE = cv.data.haarcascades + "haarcascade_frontalface_default.xml"
 
-    face_cascade = cv.CascadeClassifier(HAAR_CASCADE)  
+        face_cascade = cv.CascadeClassifier(HAAR_CASCADE)  
 
-    gray_frame = cv.cvtColor(frame_with_border, cv.COLOR_BGR2GRAY)
+        gray_frame = cv.cvtColor(frame_with_border, cv.COLOR_BGR2GRAY)
 
-    faces = face_cascade.detectMultiScale(gray_frame, 1.3, 5)
 
-    frame_with_rectangle = frame_with_border.copy()
-    if len(faces) > 0:    
+    #   Run the cascade on each image, crop all faces with border.
+        faces = face_cascade.detectMultiScale(gray_frame, 1.3, 5)
+
+        frame_with_rectangle = frame_with_border.copy()
+
+        if len(faces) > 0:    
             for (x,y,w,h) in faces:
                 #show rectangle of face
                 cv.rectangle(frame_with_rectangle, (x,y), (x+w,y+h), (0,255,0), 2)
                 cv.putText(frame_with_rectangle,args,(x,y-10), cv.FONT_HERSHEY_COMPLEX, 0.9 ,(0,255,0), 2)
 
-                # retrieve picture + crop
+                # calculate cropping
+                crop_x, crop_y, crop_w, crop_h = (dim * args.border for dim in (x, y, w, h)) # The cropping part might need an update
+
+                # apply cropping
+                cropped_frame = cv.copyMakeBorder(frame_with_border, crop_x, crop_y, crop_w, crop_h, cv.BORDER_REFLECT)
+
+                # convert img to PIL
+                PiLLoW_FRaMe = Image.fromarray(cv.cvtColor(cropped_frame, cv.COLOR_BGR2RGB))
 
 
+            #   Run each cropped face through the network to get a class prediction.
+                # Transform
+                input_tensor = ValidationTransform(PiLLoW_FRaMe)
+                input_batch = input_tensor.unsqueeze(0)
 
 
-    #   Run the cascade on each image, crop all faces with border.
+                with torch.no_grad():
+                    output = model(input_batch)
+                _, predicted = torch.max(output, 1)
 
 
+            #   Retrieve the predicted persons name from the checkpoint and display it in the image
+                # reference predicted class
+                predicted_class = checkpoint["classes"][predicted.item()]
+                label = f"{predicted_class}"
 
-    #   Run each cropped face through the network to get a class prediction.
+                # draw rectangle
+                cv.rectangle(frame_with_rectangle, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
+                cv.putText(frame_with_rectangle, (x, y - 10). cv.FRONT_HERSHEY_COMPLEX, 0.9, (0, 255, 0), 2)
 
+                #display frame
+                cv.imshow('frame', frame_with_rectangle)
 
-    #   Retrieve the predicted persons name from the checkpoint and display it in the image
+            
+        if cv.waitKey(1) == ord('q'):
+            break
 
 
 
