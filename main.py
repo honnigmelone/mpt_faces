@@ -29,8 +29,8 @@ if args.mode == "record":
 if args.mode == "crop":
     crop(args)
 
-if args.mode == "train":
-    train(args)
+# if args.mode == "train":
+#     train(args)
 
-if args.mode == "live":
-    live(args)
+# if args.mode == "live":
+#     live(args)
