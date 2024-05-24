@@ -6,7 +6,6 @@ import random
 import numpy as np
 from PIL import Image
 
-root_directory = os.getcwd() #this is the root folder of the program
 
 # This is the cropping of images
 def crop(args):
@@ -32,78 +31,53 @@ def crop(args):
         print("Border must be between 0 and 1")
         exit()
 
-    # clean folders from all files if there are any
-    # for root, dirs, files in os.walk(ROOT_FOLDER):
-    #     for name in files:
-    #         os.remove(os.path.join(root, name))
-
-    #create object folder
-    if not os.path.exists(ROOT_FOLDER):
-        os.mkdir(ROOT_FOLDER)
 
     #create the train, val and "person-name"-folders
-    train_folder_path = os.path.join(root_directory, TRAIN_FOLDER)
-    val_folder_path = os.path.join(root_directory, VAL_FOLDER)
+    train_folder_path = os.path.join(os.getcwd(), TRAIN_FOLDER)
+    val_folder_path = os.path.join(os.getcwd(), VAL_FOLDER)
+    
     for folder in [train_folder_path, val_folder_path]:
         if not os.path.exists(folder):
             os.mkdir(folder)
-                
+
+        for root,dirs, files in os.walk(folder):
+            for file in files:
+                filepath = os.path.join(root, file)
+                if os.path.isfile(filepath):
+                    os.remove(filepath)
+
     # iterate over all object folders
     for root, dirs, files in os.walk(ROOT_FOLDER):
         for dir_name in dirs:
-            object_folder = os.path.join(root, dir_name) #take the current folder as the "object_folder" for this iteration
-            print(object_folder)
-            # iterate over the full images
-            for file in os.listdir(object_folder):
-                file = os.path.join(object_folder, file)
-                print(f"I'm in file {file} now")
-
+            object_folder = os.path.join(root, dir_name)
+            for file_name in os.listdir(object_folder):
+                filepath = os.path.join(object_folder, file_name)
+                
                 #calculate borders if it's a csv-file
-                if file.endswith(".csv"):
-                    crop_width, crop_height, x1, y1, x2, y2 = border_calculation(file, args.border)
+                if filepath.endswith(".csv"):
+                    crop_width, crop_height, x1, y1, x2, y2 = border_calculation(filepath, args.border)
                     
                 #crop the actual image with given border-size if it's an image-file
-                elif file.endswith(('.jpg', '.jpeg', '.png')):
-                    frame = cv.imread(file)
+                elif filepath.endswith(('.jpg', '.jpeg', '.png')):
+                    frame = cv.imread(filepath)
+        
 
                     # apply the given border with BORDER_REFLECT
                     frame_with_border = cv.copyMakeBorder(frame, crop_height, crop_height, crop_width, crop_width, cv.BORDER_REFLECT)
-                    
                     #create a folder of the person in the train/val folders and set output directory to train or val
                     output_folder = train_folder_path if random.uniform(0.0, 1.0) < float(args.split) else val_folder_path
                     person_folder = os.path.join(output_folder, dir_name)
                     if not os.path.exists(person_folder):
-                        os.mkdir(person_folder)
+                        os.mkdir(person_folder) 
 
-                    # cache-save frame_with_border to train/val
-                    cv.imwrite(os.path.join(person_folder, file), frame_with_border)
-
-                    print(x1, y1, x2, y2)
-                    image_array = np.array(frame_with_border)
-                    # Crop the image by slicing the array
-                    cropped_image_array = image_array[y1:y2, x1:x2]
-                    # Convert the cropped array back to an image
-                    frame_cropped = Image.fromarray(cropped_image_array)
-                    frame_cropped_array = np.array(frame_cropped)
-
-                    #open, crop and save image
-                    #frame_to_crop = Image.open(frame_with_border) 
-                    #frame_cropped = frame_to_crop.crop((x1, y1, x2, y2))
-                    #frame_cropped.save(person_folder)
-                    #cv.imwrite(person_folder, frame_cropped)
-
-                    #cropped_image = frame_with_border[y1:y2, x1:x2] 
-                    print(f"cropping of {file} completed.")
-
-                    # show the cropped image
-                    cv.imshow('Cropped Image', frame_cropped_array)
-                    cv.waitKey(0)
-                    cv.destroyAllWindows()
-
-                    #THIS IS COMMENTED SO I CAN TEST THE CODE BETTER:
-                    #delete uncropped image from objects-folder
-                    #os.remove(file)
-                    #print(f"removed {file} from object folder.")
+                    frame_with_border_path = os.path.join(person_folder, file_name)
+                    cv.imwrite(frame_with_border_path, frame_with_border)
+        
+                    # Crop and save the image
+                    cropped_image = frame_with_border[y1:y2, x1:x2]
+                    output_path = os.path.join(person_folder, file_name)
+                    cv.imwrite(output_path, cropped_image)
+                    print(f"Cropped and saved: {output_path}")
 
 
 # This is the calculation of the border by the given input
