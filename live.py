@@ -61,18 +61,23 @@ def live(args):
             for (x,y,w,h) in faces:
                 #show rectangle of face
                 cv.rectangle(frame_with_rectangle, (x,y), (x+w,y+h), (0,255,0), 2)
-                #cv.putText(frame_with_rectangle,args,(x,y-10), cv.FONT_HERSHEY_COMPLEX, 0.9 ,(0,255,0), 2)
 
-                # calculate cropping
-                crop_x, crop_y = max(x - border_size, 0), max(y - border_size, 0)
-                crop_w, crop_h = min(x + w + border_size, frame_with_border.shape[1]), min(y + h + border_size, frame_with_border.shape[0])
+                border = float(args.border)
 
+                # calculate borders based on the set border-%
+                new_crop_width = int(w * border)
+                new_crop_height = int(h * border)
 
-                # apply cropping
-                cropped_frame = frame_with_border[crop_y:crop_h, crop_x:crop_w]
+                # get coords for the actual cropping
+                x1 = int(x + new_crop_width)
+                y1 = int(y + new_crop_height)
+                x2 = int(x + w + new_crop_width)
+                y2 = int(y + h + new_crop_height)
+
+                cropped_image = frame_with_border[y1:y2, x1:x2]
 
                 # convert img to PIL
-                PiLLoW_FRaMe = Image.fromarray(cv.cvtColor(cropped_frame, cv.COLOR_BGR2RGB))
+                PiLLoW_FRaMe = Image.fromarray(cv.cvtColor(cropped_image, cv.COLOR_BGR2RGB))
 
 
             #   Run each cropped face through the network to get a class prediction.
