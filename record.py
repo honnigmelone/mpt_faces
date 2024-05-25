@@ -30,15 +30,15 @@ def record(args):
 
     HAAR_CASCADE = cv.data.haarcascades + "haarcascade_frontalface_default.xml"
     
-    # #google drive download 
-    # if not os.path.isfile(HAAR_CASCADE):
-    #     print("File not found. Downloading from google drive...")
-    #     url = "https://drive.google.com/file/d/1jNQwJ6QmFCLVyUsFFIj3xkJES5T3EMz8/view"
-    #     output = os.path.join(os.getcwd(), "haarcascade_frontalface_default.xml")
-    #     gdown.download(url, output, fuzzy=True)
-    #     HAAR_CASCADE = output
-        
-        
+    #google drive download 
+    if not os.path.isfile(HAAR_CASCADE):
+        print("File not found. Downloading from google drive...")
+        url = "https://drive.google.com/file/d/1jNQwJ6QmFCLVyUsFFIj3xkJES5T3EMz8/view"
+        output = os.path.join(os.getcwd(), "haarcascade_frontalface_default.xml")
+        gdown.download(url, output, fuzzy=True)
+        HAAR_CASCADE = output
+
+
     # open webcam
     cap = cv.VideoCapture(0)
     if not cap.isOpened():
