@@ -64,10 +64,12 @@ def live(args):
                 #cv.putText(frame_with_rectangle,args,(x,y-10), cv.FONT_HERSHEY_COMPLEX, 0.9 ,(0,255,0), 2)
 
                 # calculate cropping
-                crop_x, crop_y, crop_w, crop_h = (dim * args.border for dim in (x, y, w, h)) # The cropping part might need an update
+                crop_x, crop_y = max(x - border_size, 0), max(y - border_size, 0)
+                crop_w, crop_h = min(x + w + border_size, frame_with_border.shape[1]), min(y + h + border_size, frame_with_border.shape[0])
+
 
                 # apply cropping
-                cropped_frame = cv.copyMakeBorder(frame_with_border, crop_x, crop_y, crop_w, crop_h, cv.BORDER_REFLECT)
+                cropped_frame = frame_with_border[crop_y:crop_h, crop_x:crop_w]
 
                 # convert img to PIL
                 PiLLoW_FRaMe = Image.fromarray(cv.cvtColor(cropped_frame, cv.COLOR_BGR2RGB))
@@ -88,11 +90,11 @@ def live(args):
                 # reference predicted class
                 predicted_class = checkpoint["classes"][predicted.item()]
                 label = f"{predicted_class}"
-
+                print(label)
                 # draw rectangle
                 cv.rectangle(frame_with_rectangle, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-                cv.putText(frame_with_rectangle, label, (x, y - 10). cv.FRONT_HERSHEY_COMPLEX, 0.9, (0, 255, 0), 2)
+                cv.putText(frame_with_rectangle, label, (x, y - 10), cv.FONT_HERSHEY_COMPLEX, 0.9, (0, 255, 0), 2)
 
                 #display frame
                 cv.imshow('frame', frame_with_rectangle)
