@@ -48,9 +48,9 @@ class BalancedAccuracy:
         falsepositives = (predicted_labels[groundtruth!=predicted_labels]).tolist()
 
         for idx in range(self.nClasses):
-            self.array_truelabels[idx] =+ (list_groundtruth.count(idx))
-            self.array_truepositives[idx] =+ (truepositives.count(idx))
-            self.array_falsepositives[idx] =+ (falsepositives.count(idx))
+            self.array_truelabels[idx] += (list_groundtruth.count(idx))
+            self.array_truepositives[idx] += (truepositives.count(idx))
+            self.array_falsepositives[idx] += (falsepositives.count(idx))
 
     def getBACC(self):
         # TODO: Calculcate and return balanced accuracy 
