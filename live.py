@@ -61,7 +61,7 @@ def live(args):
             for (x,y,w,h) in faces:
                 #show rectangle of face
                 cv.rectangle(frame_with_rectangle, (x,y), (x+w,y+h), (0,255,0), 2)
-                cv.putText(frame_with_rectangle,args,(x,y-10), cv.FONT_HERSHEY_COMPLEX, 0.9 ,(0,255,0), 2)
+                #cv.putText(frame_with_rectangle,args,(x,y-10), cv.FONT_HERSHEY_COMPLEX, 0.9 ,(0,255,0), 2)
 
                 # calculate cropping
                 crop_x, crop_y, crop_w, crop_h = (dim * args.border for dim in (x, y, w, h)) # The cropping part might need an update
@@ -92,7 +92,7 @@ def live(args):
                 # draw rectangle
                 cv.rectangle(frame_with_rectangle, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-                cv.putText(frame_with_rectangle, (x, y - 10). cv.FRONT_HERSHEY_COMPLEX, 0.9, (0, 255, 0), 2)
+                cv.putText(frame_with_rectangle, label, (x, y - 10). cv.FRONT_HERSHEY_COMPLEX, 0.9, (0, 255, 0), 2)
 
                 #display frame
                 cv.imshow('frame', frame_with_rectangle)
