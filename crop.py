@@ -65,7 +65,7 @@ def crop(args):
                     # apply the given border with BORDER_REFLECT
                     frame_with_border = cv.copyMakeBorder(frame, crop_height, crop_height, crop_width, crop_width, cv.BORDER_REFLECT)
                     #create a folder of the person in the train/val folders and set output directory to train or val
-                    output_folder = train_folder_path if random.uniform(0.0, 1.0) < float(args.split) else val_folder_path
+                    output_folder = train_folder_path if random.uniform(0.0, 1.0) > float(args.split) else val_folder_path
                     person_folder = os.path.join(output_folder, dir_name)
                     if not os.path.exists(person_folder):
                         os.mkdir(person_folder) 

@@ -61,16 +61,23 @@ def live(args):
             for (x,y,w,h) in faces:
                 #show rectangle of face
                 cv.rectangle(frame_with_rectangle, (x,y), (x+w,y+h), (0,255,0), 2)
-                cv.putText(frame_with_rectangle,args,(x,y-10), cv.FONT_HERSHEY_COMPLEX, 0.9 ,(0,255,0), 2)
 
-                # calculate cropping
-                crop_x, crop_y, crop_w, crop_h = (dim * args.border for dim in (x, y, w, h)) # The cropping part might need an update
+                border = float(args.border)
 
-                # apply cropping
-                cropped_frame = cv.copyMakeBorder(frame_with_border, crop_x, crop_y, crop_w, crop_h, cv.BORDER_REFLECT)
+                # calculate borders based on the set border-%
+                new_crop_width = int(w * border)
+                new_crop_height = int(h * border)
+
+                # get coords for the actual cropping
+                x1 = int(x + new_crop_width)
+                y1 = int(y + new_crop_height)
+                x2 = int(x + w + new_crop_width)
+                y2 = int(y + h + new_crop_height)
+
+                cropped_image = frame_with_border[y1:y2, x1:x2]
 
                 # convert img to PIL
-                PiLLoW_FRaMe = Image.fromarray(cv.cvtColor(cropped_frame, cv.COLOR_BGR2RGB))
+                PiLLoW_FRaMe = Image.fromarray(cv.cvtColor(cropped_image, cv.COLOR_BGR2RGB))
 
 
             #   Run each cropped face through the network to get a class prediction.
@@ -88,11 +95,11 @@ def live(args):
                 # reference predicted class
                 predicted_class = checkpoint["classes"][predicted.item()]
                 label = f"{predicted_class}"
-
+                print(label)
                 # draw rectangle
                 cv.rectangle(frame_with_rectangle, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-                cv.putText(frame_with_rectangle, (x, y - 10). cv.FRONT_HERSHEY_COMPLEX, 0.9, (0, 255, 0), 2)
+                cv.putText(frame_with_rectangle, label, (x, y - 10), cv.FONT_HERSHEY_COMPLEX, 0.9, (0, 255, 0), 2)
 
                 #display frame
                 cv.imshow('frame', frame_with_rectangle)
