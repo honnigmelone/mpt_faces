@@ -1,5 +1,6 @@
 import torch
 import numpy as np
+np.seterr(divide='ignore', invalid='ignore')
 
 # NOTE: This will be the calculation of balanced accuracy for your classification task
 # The balanced accuracy is defined as the average accuracy for each class. 
@@ -40,34 +41,38 @@ class BalancedAccuracy:
         # Predictions = BATCH_SIZE x N_CLASSES
         # Groundtruth = BATCH_SIZE x 1
 
-        self.number_of_predictions =+ len(groundtruth)
+        self.number_of_predictions += len(groundtruth)
         list_groundtruth = groundtruth.tolist()
-
         predicted_labels = torch.argmax(predictions, dim=1)
         truepositives = (predicted_labels[groundtruth==predicted_labels]).tolist()
         falsepositives = (predicted_labels[groundtruth!=predicted_labels]).tolist()
 
         for idx in range(self.nClasses):
-            self.array_truelabels[idx] =+ (list_groundtruth.count(idx))
-            self.array_truepositives[idx] =+ (truepositives.count(idx))
-            self.array_falsepositives[idx] =+ (falsepositives.count(idx))
+            self.array_truelabels[idx] += (list_groundtruth.count(idx))
+            self.array_truepositives[idx] += (truepositives.count(idx))
+            self.array_falsepositives[idx] += (falsepositives.count(idx))
 
     def getBACC(self):
         # TODO: Calculcate and return balanced accuracy 
         # based on current internal state
 
+        print(f"array_truepositives: {self.array_truepositives}")
+        print(f"array_truepositives: {self.array_truelabels}")
         #TP_rate = truepositive/real positive
         true_positive_rates = self.array_truepositives/self.array_truelabels
-        
+
         # calculate real negatives:
         array_negatives = self.number_of_predictions - self.array_truelabels
+
         # calculate trueNegatives:
         array_truenegatives = array_negatives - self.array_falsepositives
+
         #TN_rate = truenegative/negative
         true_negative_rates = array_truenegatives/array_negatives
-        
+
         #calculate balanced accuracy for each class
         array_balanced_acc = (true_negative_rates + true_positive_rates)/2
 
         # return mean bacc over all classes
         return np.mean(array_balanced_acc)
+    
