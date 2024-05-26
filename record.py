@@ -1,9 +1,8 @@
-import numpy as np
-import cv2 as cv
 import os
 import gdown
 import uuid
 import csv
+import cv2 as cv
 from common import ROOT_FOLDER, GOOGLE_DRIVE_LINK
 
 

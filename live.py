@@ -5,7 +5,7 @@ from transforms import ValidationTransform
 from PIL import Image
 from crop import calculate_border
 
-# NOTE: This will be the live execution of your pipeline
+# NOTE: This is the live execution of the pipeline
 
 
 def live(args):
@@ -73,7 +73,7 @@ def live(args):
                 # Reference predicted class
                 predicted_class = checkpoint["classes"][predicted.item()]
                 label = f"{predicted_class}"
-  
+
                 # Draw rectangle
                 cv.rectangle(frame_with_rectangle, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
@@ -81,7 +81,7 @@ def live(args):
 
                 # Display frame
                 cv.imshow('frame', frame_with_rectangle)
-    
+
         if cv.waitKey(1) == ord('q'):
             break
 

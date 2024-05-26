@@ -32,8 +32,8 @@ class BalancedAccuracy:
 
     def update(self, predictions, groundtruth):
         # TODO: Implement the update of internal states
-        # based on current network predictions and the groundtruth value.            
-        # Predictions is a Tensor with logits (non-normalized activations)            
+        # based on current network predictions and the groundtruth value.           
+        # Predictions is a Tensor with logits (non-normalized activations)           
         # It is a BATCH_SIZE x N_CLASSES float Tensor. The argmax for each samples
         # indicated the predicted class.
         # Groundtruth is a BATCH_SIZE x 1 long Tensor. It contains the index of the

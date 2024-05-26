@@ -4,6 +4,7 @@ import random
 import cv2 as cv
 from common import ROOT_FOLDER, TRAIN_FOLDER, VAL_FOLDER
 
+
 # This is the cropping of images
 def crop(args):
     # TODO: Crop the full-frame images into individual crops
@@ -27,12 +28,12 @@ def crop(args):
     # Create the train, val and "person-name"-folders
     train_folder_path = os.path.join(os.getcwd(), TRAIN_FOLDER)
     val_folder_path = os.path.join(os.getcwd(), VAL_FOLDER)
-    
+
     for folder in [train_folder_path, val_folder_path]:
         if not os.path.exists(folder):
             os.mkdir(folder)
 
-        for root,dirs, files in os.walk(folder):
+        for root, dirs, files in os.walk(folder):
             for file in files:
                 filepath = os.path.join(root, file)
                 if os.path.isfile(filepath):
@@ -44,27 +45,27 @@ def crop(args):
             object_folder = os.path.join(root, dir_name)
             for file_name in os.listdir(object_folder):
                 filepath = os.path.join(object_folder, file_name)
-                
-                #calculate borders if it's a csv-file
+
+                # Calculate borders if it's a csv-file
                 if filepath.endswith(".csv"):
                     x, y, w, h = get_cords_from_csv(filepath)
                     crop_width, crop_height, x1, y1, x2, y2 = calculate_border(x, y, w, h, args.border)
-                    
-                #crop the actual image with given border-size if it's an image-file
+
+                # Crop the actual image with given border-size if it's an image-file
                 elif filepath.endswith(('.jpg', '.jpeg', '.png')):
                     frame = cv.imread(filepath)
-        
+
                     # Apply the given border with BORDER_REFLECT
                     frame_with_border = cv.copyMakeBorder(frame, crop_height, crop_height, crop_width, crop_width, cv.BORDER_REFLECT)
                     # Create a folder of the person in the train/val folders and set output directory to train or val
                     output_folder = train_folder_path if random.uniform(0.0, 1.0) > float(args.split) else val_folder_path
                     person_folder = os.path.join(output_folder, dir_name)
                     if not os.path.exists(person_folder):
-                        os.mkdir(person_folder) 
+                        os.mkdir(person_folder)
 
                     frame_with_border_path = os.path.join(person_folder, file_name)
                     cv.imwrite(frame_with_border_path, frame_with_border)
-        
+
                     # Crop and save the image
                     cropped_image = frame_with_border[y1:y2, x1:x2]
                     output_path = os.path.join(person_folder, file_name)
@@ -78,7 +79,7 @@ def get_cords_from_csv(csv_path):
     with open(csv_path, "r", encoding="utf-8-sig") as file:
         csv_reader = csv.reader(file, delimiter=",")
         coords = next(csv_reader)
-    
+
     x = float(coords[0])
     y = float(coords[1])
     w = float(coords[2])
@@ -100,6 +101,5 @@ def calculate_border(x, y, w, h, border):
     y1 = int(y + new_crop_height)
     x2 = int(x + w + new_crop_width)
     y2 = int(y + h + new_crop_height)
-
 
     return new_crop_width, new_crop_height, x1, y1, x2, y2
