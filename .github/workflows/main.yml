@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - linting
   pull_request:
     branches:
       - '*'
