@@ -104,14 +104,11 @@ def calculate_border(x, y, w, h, border):
     new_crop_width = int(w * border)
     new_crop_height = int(h * border)
 
-    print(f"NEW CROP WIDTH/HEIGHT IS: {new_crop_width, new_crop_height}")
-
     # get coords for the actual cropping
     x1 = int(x + new_crop_width)
     y1 = int(y + new_crop_height)
     x2 = int(x + w + new_crop_width)
     y2 = int(y + h + new_crop_height)
 
-    print(f"NEW COORDS ARE: {x1, y1, x2, y2}")
 
     return new_crop_width, new_crop_height, x1, y1, x2, y2
