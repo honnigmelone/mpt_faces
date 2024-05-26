@@ -55,7 +55,8 @@ def crop(args):
                 
                 #calculate borders if it's a csv-file
                 if filepath.endswith(".csv"):
-                    crop_width, crop_height, x1, y1, x2, y2 = border_calculation(filepath, args.border)
+                    x, y, w, h = get_cords_from_csv(filepath)
+                    crop_width, crop_height, x1, y1, x2, y2 = calculate_border(x, y, w, h, args.border)
                     
                 #crop the actual image with given border-size if it's an image-file
                 elif filepath.endswith(('.jpg', '.jpeg', '.png')):
@@ -81,7 +82,7 @@ def crop(args):
 
 
 # This is the calculation of the border by the given input
-def border_calculation(csv_path, border):
+def get_cords_from_csv(csv_path):
     #open csv and save the coordinates to variable "coords"
     with open(csv_path, "r", encoding="utf-8-sig") as file:
         csv_reader = csv.reader(file, delimiter=",")
@@ -91,15 +92,17 @@ def border_calculation(csv_path, border):
     y = float(coords[1])
     w = float(coords[2])
     h = float(coords[3])
-    border = float(border)
 
-    print(f"OLD COORDS/width ARE: {x, y, w, h}")
+    return x, y, w, h
+
+
+def calculate_border(x, y, w, h, border):
+
+    border = float(border)
 
     # calculate borders based on the set border-%
     new_crop_width = int(w * border)
     new_crop_height = int(h * border)
-
-    print(f"NEW CROP WIDTH/HEIGHT IS: {new_crop_width, new_crop_height}")
 
     # get coords for the actual cropping
     x1 = int(x + new_crop_width)
@@ -107,6 +110,5 @@ def border_calculation(csv_path, border):
     x2 = int(x + w + new_crop_width)
     y2 = int(y + h + new_crop_height)
 
-    print(f"NEW COORDS ARE: {x1, y1, x2, y2}")
 
     return new_crop_width, new_crop_height, x1, y1, x2, y2

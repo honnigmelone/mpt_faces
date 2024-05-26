@@ -4,7 +4,7 @@ import os
 import gdown
 import uuid
 import csv
-from common import ROOT_FOLDER
+from common import ROOT_FOLDER, GOOGLE_DRIVE_LINK
 
 
 # Quellen
@@ -17,14 +17,14 @@ from common import ROOT_FOLDER
 
 # This is the data recording pipeline
 def record(args):
-    # TODO: Implement the recording stage of your pipeline  
+    
 
     #exit if folder is None
     if args.folder is None:
         print("Please specify folder for data to be recorded into")
         exit()
 
-    # Create missing folder
+    # Create folder for recorded person
     target_folder = os.path.join(ROOT_FOLDER, args.folder)
     os.makedirs(target_folder, exist_ok=True)
 
@@ -33,8 +33,8 @@ def record(args):
     #google drive download 
     if not os.path.isfile(HAAR_CASCADE):
         print("File not found. Downloading from google drive...")
-        url = "https://drive.google.com/file/d/1jNQwJ6QmFCLVyUsFFIj3xkJES5T3EMz8/view"
-        output = os.path.join(os.getcwd(), "haarcascade_frontalface_default.xml")
+        url = GOOGLE_DRIVE_LINK
+        output = "haarcascade_frontalface_default.xml"
         gdown.download(url, output, fuzzy=True)
         HAAR_CASCADE = output
 
@@ -45,7 +45,7 @@ def record(args):
         print("Cannot open camera!")
         exit()
 
-    #variable to detect when to cpature frame 
+    #variable to detect when to save frame 
     frames_since_detection = 0 
     save_frames = True
 
@@ -73,9 +73,9 @@ def record(args):
 
                 #show rectangle of face
                 cv.rectangle(frame_with_rectangle, (x,y), (x+w,y+h), (0,255,0), 2)
-                cv.putText(frame_with_rectangle,args.folder,(x,y-10), cv.FONT_HERSHEY_COMPLEX, 0.9 ,(0,255,0), 2)
+                cv.putText(frame_with_rectangle, args.folder, (x,y-10), cv.FONT_HERSHEY_COMPLEX, 0.9 ,(0,255,0), 2)
 
-        if len(faces) and save_frames:
+        if len(faces) == 1 and save_frames:
 
             #save frame with unique filename
             filename = f"face_{args.folder}_{uuid.uuid4()}"
@@ -111,11 +111,3 @@ def record(args):
     # When everything done, release the capture
     cap.release()
     cv.destroyAllWindows()
-
-
-
-    #   Initialize the Haar feature cascade for face recognition from OpenCV (cv.CascadeClassifier)
-    #   If the cascade file (haarcascade_frontalface_default.xml) is missing, download it from google drive
-    #   Run the cascade on every image to detect possible faces (CascadeClassifier::detectMultiScale)
-    #   If there is exactly one face, write the image and the face position to disk in two seperate files (cv.imwrite, csv.writer)
-    #   If you have just saved, block saving for 30 consecutive frames to make sure you get good variance of images.
