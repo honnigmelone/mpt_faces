@@ -3,16 +3,15 @@ import numpy as np
 np.seterr(divide='ignore', invalid='ignore')
 
 # NOTE: This will be the calculation of balanced accuracy for your classification task
-# The balanced accuracy is defined as the average accuracy for each class. 
+# The balanced accuracy is defined as the average accuracy for each class.
 # The accuracy for an indiviual class is the ratio between correctly classified example to all examples of that class.
 # The code in train.py will instantiate one instance of this class.
-# It will call the reset methos at the beginning of each epoch. Use this to reset your
-# internal states. The update method will be called multiple times during an epoch, once for each batch of the training.
+# It will call the reset methos at the beginning of each epoch. Use this to reset your internal states. 
+# The update method will be called multiple times during an epoch, once for each batch of the training.
 # You will receive the network predictions, a Tensor of Size (BATCHSIZExCLASSES) containing the logits (output without Softmax).
 # You will also receive the groundtruth, an integer (long) Tensor with the respective class index per example.
 # For each class, count how many examples were correctly classified and how many total examples exist.
-# Then, in the getBACC method, calculate the balanced accuracy by first calculating each individual accuracy
-# and then taking the average.
+# In the getBACC method, calculate the balanced accuracy by calculating each individual accuracy and then taking the average.
 
 # Balanced Accuracy
 class BalancedAccuracy:
