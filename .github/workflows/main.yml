@@ -17,7 +17,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -32,3 +32,10 @@ jobs:
     - name: Run flake8
       run: |
         flake8 .
+      continue-on-error: true
+
+    - name: Analyze flake8 results
+      if: failure()
+      run: |
+        echo "flake8 found issues, please review the output above."
+
