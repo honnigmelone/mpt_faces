@@ -8,11 +8,7 @@ from crop import calculate_border
 # NOTE: This will be the live execution of your pipeline
 
 
-'''
--> Amount of processed frames might need to be reduced (e.g. by using save_frames like in record.py)
-'''
 def live(args):
-    # TODO:
     #   Load the model checkpoint from a previous training session (check code in train.py)
     checkpoint = torch.load('model.pt')
 
@@ -40,21 +36,19 @@ def live(args):
         border_size = int(min(frame.shape[:2]) * float(args.border))
         frame_with_border = cv.copyMakeBorder(frame, border_size, border_size, border_size, border_size, cv.BORDER_REFLECT, value=[0, 0, 0])
 
-
     #   Initialize the face recognition cascade again (reuse code if possible)
         HAAR_CASCADE = cv.data.haarcascades + "haarcascade_frontalface_default.xml"
 
-        face_cascade = cv.CascadeClassifier(HAAR_CASCADE) 
+        face_cascade = cv.CascadeClassifier(HAAR_CASCADE)
 
         gray_frame = cv.cvtColor(frame_with_border, cv.COLOR_BGR2GRAY)
-
 
     #   Run the cascade on each image, crop all faces with border.
         faces = face_cascade.detectMultiScale(gray_frame, 1.3, 5)
 
         frame_with_rectangle = frame_with_border.copy()
 
-        if len(faces) > 0: 
+        if len(faces) > 0:
             for (x, y, w, h) in faces:
                 # Show rectangle of face
                 cv.rectangle(frame_with_rectangle, (x, y), (x+w, y+h), (0, 255, 0), 2)
@@ -79,7 +73,7 @@ def live(args):
                 # Reference predicted class
                 predicted_class = checkpoint["classes"][predicted.item()]
                 label = f"{predicted_class}"
-                
+  
                 # Draw rectangle
                 cv.rectangle(frame_with_rectangle, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
@@ -87,12 +81,9 @@ def live(args):
 
                 # Display frame
                 cv.imshow('frame', frame_with_rectangle)
-
-            
+    
         if cv.waitKey(1) == ord('q'):
             break
-
-
 
     if args.border is None:
         print("Live mode requires a border value to be set")

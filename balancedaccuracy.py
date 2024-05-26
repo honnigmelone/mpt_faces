@@ -13,12 +13,13 @@ np.seterr(divide='ignore', invalid='ignore')
 # For each class, count how many examples were correctly classified and how many total examples exist.
 # In the getBACC method, calculate the balanced accuracy by calculating each individual accuracy and then taking the average.
 
+
 # Balanced Accuracy
 class BalancedAccuracy:
     def __init__(self, nClasses):
         # TODO: Setup internal variables
         # NOTE: It is good practive to all reset() from here to make sure everything is properly initialized
-        self.nClasses = nClasses 
+        self.nClasses = nClasses
         self.reset()
 
     def reset(self):
@@ -31,8 +32,8 @@ class BalancedAccuracy:
 
     def update(self, predictions, groundtruth):
         # TODO: Implement the update of internal states
-        # based on current network predictions and the groundtruth value.              
-        # Predictions is a Tensor with logits (non-normalized activations)             
+        # based on current network predictions and the groundtruth value.            
+        # Predictions is a Tensor with logits (non-normalized activations)            
         # It is a BATCH_SIZE x N_CLASSES float Tensor. The argmax for each samples
         # indicated the predicted class.
         # Groundtruth is a BATCH_SIZE x 1 long Tensor. It contains the index of the
@@ -74,4 +75,3 @@ class BalancedAccuracy:
 
         # return mean bacc over all classes
         return np.mean(array_balanced_acc)
-    

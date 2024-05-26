@@ -12,10 +12,10 @@ class Net(nn.Module):
         # Output must be a nClasses Tensor.                 --> last linear layer has to have nClasses output
 
         # Convolutional layers:
-        self.Conv1 = nn.Conv2d(3, 15, (3, 3), padding='same') 
+        self.Conv1 = nn.Conv2d(3, 15, (3, 3), padding='same')
         self.Conv2 = nn.Conv2d(15, 45, (3, 3), padding='same')
         self.Conv3 = nn.Conv2d(45, 10, (3, 3), padding='same')
-    
+
         # Other Layers:
         self.Pool = nn.MaxPool2d((2, 2), stride=(2, 2))
         self.Flat = nn.Flatten()

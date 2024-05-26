@@ -7,17 +7,8 @@ import csv
 from common import ROOT_FOLDER, GOOGLE_DRIVE_LINK
 
 
-# Quellen
-#  - How to open the webcam: https://docs.opencv.org/4.x/dd/d43/tutorial_py_video_display.html
-#  - How to run the detector: https://opencv24-python-tutorials.readthedocs.io/en/latest/py_tutorials/py_objdetect/py_face_detection/py_face_detection.html
-#  - How to download files from google drive: https://github.com/wkentaro/gdown
-#  - How to save an image with OpenCV: https://docs.opencv.org/3.4/d4/da8/group__imgcodecs.html
-#  - How to read/write CSV files: https://docs.python.org/3/library/csv.html
-#  - How to create new folders: https://www.geeksforgeeks.org/python-os-mkdir-method/
-
 # This is the data recording pipeline
 def record(args):
-
 
     # Exit if folder is None
     if args.folder is None:
@@ -37,7 +28,6 @@ def record(args):
         output = "haarcascade_frontalface_default.xml"
         gdown.download(url, output, fuzzy=True)
         HAAR_CASCADE = output
-
 
     # Open webcam
     cap = cv.VideoCapture(0)
@@ -71,9 +61,9 @@ def record(args):
         if len(faces) > 0:
             for (x, y, w, h) in faces:
 
-                #show rectangle of face
+                # Show rectangle of face
                 cv.rectangle(frame_with_rectangle, (x, y), (x+w, y+h), (0, 255, 0), 2)
-                cv.putText(frame_with_rectangle, args.folder, (x, y-10), cv.FONT_HERSHEY_COMPLEX, 0.9 ,(0, 255, 0), 2)
+                cv.putText(frame_with_rectangle, args.folder, (x, y-10), cv.FONT_HERSHEY_COMPLEX, 0.9, (0, 255, 0), 2)
 
         if len(faces) == 1 and save_frames:
 
@@ -100,12 +90,11 @@ def record(args):
             if frames_since_detection >= 30:
                 save_frames = True
 
-        #display frame
+        # Display frame
         cv.imshow('frame', frame_with_rectangle)
 
         if cv.waitKey(1) == ord('q'):
             break
-    
-    # When everything done, release the capture
+
     cap.release()
     cv.destroyAllWindows()
