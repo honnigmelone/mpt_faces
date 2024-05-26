@@ -1,11 +1,8 @@
-import cv2 as cv
-from common import ROOT_FOLDER, TRAIN_FOLDER, VAL_FOLDER
 import os
 import csv
 import random
-import numpy as np
-from PIL import Image
-
+import cv2 as cv
+from common import ROOT_FOLDER, TRAIN_FOLDER, VAL_FOLDER
 
 # This is the cropping of images
 def crop(args):
