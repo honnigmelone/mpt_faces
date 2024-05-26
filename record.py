@@ -17,14 +17,14 @@ from common import ROOT_FOLDER, GOOGLE_DRIVE_LINK
 
 # This is the data recording pipeline
 def record(args):
-    # TODO: Implement the recording stage of your pipeline  
+    
 
     #exit if folder is None
     if args.folder is None:
         print("Please specify folder for data to be recorded into")
         exit()
 
-    # Create missing folder
+    # Create folder for recorded person
     target_folder = os.path.join(ROOT_FOLDER, args.folder)
     os.makedirs(target_folder, exist_ok=True)
 
@@ -45,7 +45,7 @@ def record(args):
         print("Cannot open camera!")
         exit()
 
-    #variable to detect when to cpature frame 
+    #variable to detect when to save frame 
     frames_since_detection = 0 
     save_frames = True
 

@@ -1,17 +1,14 @@
-import cv2 as cv
 import torch
-import os
+import cv2 as cv
 from network import Net
-#from cascade import create_cascade
 from transforms import ValidationTransform
 from PIL import Image
-import random
+from crop import calculate_border
 
 # NOTE: This will be the live execution of your pipeline
 
 
 '''
--> Cropping might need an update
 -> Amount of processed frames might need to be reduced (e.g. by using save_frames like in record.py)
 '''
 def live(args):
@@ -62,17 +59,7 @@ def live(args):
                 #show rectangle of face
                 cv.rectangle(frame_with_rectangle, (x,y), (x+w,y+h), (0,255,0), 2)
 
-                border = float(args.border)
-
-                # calculate borders based on the set border-%
-                new_crop_width = int(w * border)
-                new_crop_height = int(h * border)
-
-                # get coords for the actual cropping
-                x1 = int(x + new_crop_width)
-                y1 = int(y + new_crop_height)
-                x2 = int(x + w + new_crop_width)
-                y2 = int(y + h + new_crop_height)
+                _, _, x1, y1, x2, y2 = calculate_border(x, y, w, h, args.border)
 
                 cropped_image = frame_with_border[y1:y2, x1:x2]
 
@@ -95,7 +82,7 @@ def live(args):
                 # reference predicted class
                 predicted_class = checkpoint["classes"][predicted.item()]
                 label = f"{predicted_class}"
-                print(label)
+                
                 # draw rectangle
                 cv.rectangle(frame_with_rectangle, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
