@@ -1,6 +1,7 @@
 from torch import nn
 
-# NOTE: This will be the network architecture.
+
+# NOTE: This is the network architecture.
 
 class Net(nn.Module):
     def __init__(self, nClasses):
