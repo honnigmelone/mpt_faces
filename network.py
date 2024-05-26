@@ -1,7 +1,7 @@
-import torch
 from torch import nn
 
-# NOTE: This will be the network architecture. 
+
+# NOTE: This is the network architecture.
 
 class Net(nn.Module):
     def __init__(self, nClasses):
@@ -13,22 +13,22 @@ class Net(nn.Module):
         # Output must be a nClasses Tensor.                 --> last linear layer has to have nClasses output
 
         # Convolutional layers:
-        self.Conv1 = nn.Conv2d(3,15,(3,3), padding='same') 
-        self.Conv2 = nn.Conv2d(15,45,(3,3), padding='same') 
-        self.Conv3 = nn.Conv2d(45,10,(3,3), padding='same') 
-        
+        self.Conv1 = nn.Conv2d(3, 15, (3, 3), padding='same')
+        self.Conv2 = nn.Conv2d(15, 45, (3, 3), padding='same')
+        self.Conv3 = nn.Conv2d(45, 10, (3, 3), padding='same')
+
         # Other Layers:
-        self.Pool = nn.MaxPool2d((2,2), stride=(2,2))
+        self.Pool = nn.MaxPool2d((2, 2), stride=(2, 2))
         self.Flat = nn.Flatten()
         self.Relu = nn.ReLU()
         self.Soft = nn.Softmax(dim=1)
 
-        # Input is calculated with size*size*output of last layer. 
+        # Input is calculated with size*size*output of last layer.
         # 64x64x10 = 40960
         self.fc = nn.Linear(40960, nClasses)
 
     def forward(self, x):
-        # TODO: 
+        # TODO:
         # Implement forward pass
         #  x is a BATCH_SIZEx3x256x256 Tensor
         #  return value must be a BATCH_SIZExN_CLASSES Tensor
