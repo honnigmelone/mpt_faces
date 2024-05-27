@@ -1,13 +1,13 @@
 import torch
 import torch.nn
-from torch.utils.data import DataLoader
 import torchvision
-from torchvision import transforms
+from torch.utils.data import DataLoader
 from tqdm import tqdm
 from common import TRAIN_FOLDER, VAL_FOLDER
 from balancedaccuracy import BalancedAccuracy
 from network import Net
 from transforms import TrainingTransform, ValidationTransform
+
 
 # NOTE: You do not need to change this file
 # Make sure your other code works around this
